@@ -1,0 +1,21 @@
+import requests
+from bs4 import BeautifulSoup
+
+urls = ['https://es.investing.com/crypto/bitcoin', 'https://es.investing.com/crypto/ethereum', 'https://es.investing.com/crypto/bnb', 'https://es.investing.com/crypto/tether']
+
+data = []
+
+for url in urls:
+    page = requests.get(url)
+    soup = BeautifulSoup(page.content, 'html.parser')
+
+    price = soup.find('span', {'id':'last_last'}).text
+    name = soup.find('h1', {'class':'float_lang_base_1 relativeAttr'}).text.strip()
+    variation = soup.find('div', {'class':'dataItem'}).find_all('p')
+    var_name = variation[0].text
+    var_value = variation[1].text
+
+    result = {'Divisa': name, 'Precio': price, 'Mercado': var_name + var_value}
+    data.append(result)
+
+print(data)
